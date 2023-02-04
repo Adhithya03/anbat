@@ -18,6 +18,7 @@ def index():
         elif (total_days % 7 == 6):
             weekends += 2
         work_days = total_days - weekends
+        
         daySubMatrix = [[1, 1, 1, 1, 0, 0],
                         [1, 1, 1, 1, 0, 0],
                         [1, 1, 1, 1, 2, 1],
