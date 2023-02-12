@@ -8,8 +8,10 @@ def index():
     if request.method == 'POST':
         start_date_str = request.form['start_date']
         end_date_str = request.form['end_date']
-        start_date = datetime.strptime(start_date_str, "%d/%m/%Y")
-        end_date = datetime.strptime(end_date_str, "%d/%m/%Y")
+        print(start_date_str,end_date_str)
+        start_date = datetime.strptime(start_date_str, "%Y-%m-%d")
+        end_date = datetime.strptime(end_date_str, "%Y-%m-%d")
+        
         delta = end_date - start_date
         total_days = delta.days + 1
         weekends = (total_days // 7) * 2
@@ -28,11 +30,14 @@ def index():
         tot_per = [0, 0, 0, 0, 0, 0]
         holidays = [0, 0, 0, 0, 0]
         absent_days = [0, 0, 0, 0, 0]
+        poss_leave_days=[3,3,3,3,3]
+
         weekdays = ['Wednesday', 'Thursday', 'Friday', 'Saturday', 'Tuesday']
         
         for i, day in enumerate(weekdays):
             day = request.form[f"{day}_absent"]
             absent_days[i] = int(day)
+            poss_leave_days[i]-=absent_days[i]
         for i, day in enumerate(weekdays):
             day = request.form[f"{day}_holiday"]
             holidays[i] = int(day)
@@ -54,7 +59,13 @@ def index():
                 att_per[j] += daySubMatrix[x][j]
         for i in range(6):
             percent[i] = round((att_per[i] / tot_per[i]) * 100,2)
-        return render_template('result.html', percent=percent)
+        for i, day in enumerate(weekdays):
+            d=day
+            if poss_leave_days[i]>1:
+                d = day+'s'
+        print(poss_leave_days)
+        return render_template('result.html', percent=percent,posdays=poss_leave_days)
+    
     return render_template('index.html')
 
 if __name__ == '__main__':
